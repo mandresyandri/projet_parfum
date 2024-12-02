@@ -9,6 +9,10 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.service import Service as ChromeService
 
+# Paramètres
+i_url_str = "https://www.marionnaud.fr/parfum/parfum-femme/eau-de-parfum/venus-de-nina-ricci-venus-de-nricci-edp30ml-vp-recharg-nina-ricci/p/BP_103227144?utm_source=google&utm_medium=cpc&utm_campaign=PerformanceMax-Shopping-Parfum&utm_term=&gad_source=1&gclid=CjwKCAiA3ZC6BhBaEiwAeqfvynEvEVcwOqXY9DeRupQiWa24v10bdAqlVFMGw7M_4OHxNkxDaz_hAhoCwfkQAvD_BwE"
+o_filename_str = "data/sortie.txt"
+
 # Fonction 1 
 def getstaticurl(i_url_str):
     return i_url_str.split("?")[0]
