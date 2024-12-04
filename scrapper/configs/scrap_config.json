@@ -1,0 +1,21 @@
+{
+    
+    "nocibe" : {
+        "contenance": ".product-detail__variant-name",
+        "prix": ".product-detail__variant-row > .product-price"
+    },
+    
+    "sephora" : {
+        "wait_cookies" : "#footer_tc_privacy",
+        "cookies": "#footer_tc_privacy_button_2",
+        "contenance": ".variation-title:first-of-type > span:first-of-type",
+        "prix": ".variation-title > .hide > .product-variant-price-wrapper > .product-price"
+    },
+    
+    "configs_marionnaud" : {
+        "cookies_presence": "",
+        "cookies_ingore": "",
+        "contenance": "",
+        "prix": ""
+    }
+}
