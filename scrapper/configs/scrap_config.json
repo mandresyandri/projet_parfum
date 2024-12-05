@@ -12,10 +12,8 @@
         "prix": ".variation-title > .hide > .product-variant-price-wrapper > .product-price"
     },
     
-    "configs_marionnaud" : {
-        "cookies_presence": "",
-        "cookies_ingore": "",
-        "contenance": "",
-        "prix": ""
+    "marionnaud" : {
+        "contenance": ".abt-var-sel__name",
+        "prix": ".abt-var-sel__new-price"
     }
 }

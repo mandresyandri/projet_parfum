@@ -11,9 +11,9 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.service import Service as ChromeService
 
 
-# # # # # # # # # # # # # #
-# Step --> configurations #
-# # # # # # # # # # # # # #
+# # # # # # # # # #
+# Step --> Scrap  #
+# # # # # # # # # #
 class Scrapper:
     # Config base
     def __init__(self, url_input: str, file_output: str, name: str, configs: dict):
@@ -26,12 +26,13 @@ class Scrapper:
     # Config browser
     def config_browser(self):
         chrome_options = Options()
-        chrome_options.add_argument("--headless")
-        chrome_options.add_argument('--disable-gpu')
+        # chrome_options.add_argument("--headless")
+        # chrome_options.add_argument('--disable-gpu')
         chrome_options.add_argument(
             "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36"
             )
         chrome_options.add_argument('--disable-dev-shm-usage')
+        chrome_options.add_argument("--incognito")
         return chrome_options
     
     # Config driver 
@@ -43,24 +44,31 @@ class Scrapper:
         )
         return driver
 
+    # Traitement des cookies
     def cookies(self, driver):
         WebDriverWait(driver, 30).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, self.configs[self.name]["wait_cookies"]))
         )
         cookies = driver.find_element(By.CSS_SELECTOR, self.configs[self.name]["cookies"])
         cookies.click()
-
+    
+    # Récupération des prix par select
+    def wait_price(self, driver):
+        WebDriverWait(driver, 30).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, self.configs[self.name]["contenance"]))
+        )
+        
     # Sauvegarde des pages 
     def savehtml(self):
         url = self.url_input.split("?")[0]
         driver = self.config_driver()
         driver.get(url)
-        self.cookies(driver) if self.name == "sephora" else None
+        self.cookies(driver) if (self.name == "sephora") else None
+        self.wait_price(driver) if (self.name == "marionnaud") else None
         html_source = driver.page_source
         driver.quit()
         with open(self.file_output, "w", encoding="utf-8") as file:
             file.write(html_source)
-
 
 # # # # # # # # # #
 # Step --> Parse  #

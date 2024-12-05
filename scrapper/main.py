@@ -13,7 +13,6 @@ with open("scrapper/configs/site_url.json") as file:
 with open("scrapper/configs/scrap_config.json") as file:
     configs = dict(json.load(file))
 
-
 # # # # # # # # # # # # # # # 
 # Scrapper et parser Nocibe #
 # # # # # # # # # # # # # # # 
@@ -41,3 +40,17 @@ if "sephora.html" not in os.listdir("data/"):
 
 if "sephora.json" not in os.listdir("data/"):
     sephora_parser.parse_pages()
+
+# # # # # # # # # # # # # # # # #
+# Scrapper et parser marionnaud #
+# # # # # # # # # # # # # # # # #
+
+# Appel des objets scrapper et parser
+marionnaud_scrapper = Scrapper(urls["marionnaud"], "data/current/marionnaud", name="marionnaud", configs=configs)
+marionnaud_parser = Parser("data/current/marionnaud", "marionnaud", configs=configs)
+
+if "marionnaud.html" not in os.listdir("data/"):
+    marionnaud_scrapper.savehtml()
+
+if "marionnaud.json" not in os.listdir("data/"):
+    marionnaud_parser.parse_pages()
