@@ -120,5 +120,7 @@ class Parser:
         filename = self.file_output2.split("/")
         if filename[1] not in os.listdir("data/"):
             errors.append(f"Etape enregistrement du fichier {self.file_output2} : le fichier n'a pas été enregistré.")
-            
-        print("Good" if len(errors) < 1 else f"Erreur : \n{errors}")
+        
+        print(f"{'---' * 3}")
+        print(f"{self.name} is scrapped in {self.file_output2}" if len(errors) < 1 else f"Erreur : \n{errors}")
+        print(f"{'---' * 3}")
