@@ -13,7 +13,8 @@
     },
     
     "marionnaud" : {
-        "contenance": ".abt-var-sel__name",
-        "prix": ".abt-var-sel__new-price"
+        "contenance": ".product-carousel-variant__size",
+        "click": "",
+        "prix": "e2core-price.product-add-to-cart__price-depiction.price.price--discounted > span.price__current > span.price__default-value"
     }
 }

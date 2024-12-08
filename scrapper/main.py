@@ -18,13 +18,13 @@ with open("scrapper/configs/scrap_config.json") as file:
 # # # # # # # # # # # # # # # 
 
 # Appel des objets scrapper et parser
-nocibe_scrapper = Scrapper(urls["nocibe"], "data/current/nocibe", name="nocibe", configs=configs)
-nocibe_parser = Parser("data/current/nocibe", "nocibe", configs=configs)
+nocibe_scrapper = Scrapper(urls["nocibe"], "scrapper/data/current/nocibe", name="nocibe", configs=configs)
+nocibe_parser = Parser("scrapper/data/current/nocibe", "nocibe", configs=configs)
 
-if "nocibe.html" not in os.listdir("data/"):
+if "nocibe.html" not in os.listdir("scrapper/data/current/"):
     nocibe_scrapper.savehtml()
 
-if "nocibe.json" not in os.listdir("data/"):
+if "nocibe.json" not in os.listdir("scrapper/data/current/"):
     nocibe_parser.parse_pages()
 
 # # # # # # # # # # # # # # # # 
@@ -32,13 +32,13 @@ if "nocibe.json" not in os.listdir("data/"):
 # # # # # # # # # # # # # # # #
 
 # Appel des objets scrapper et parser
-sephora_scrapper = Scrapper(urls["sephora"], "data/current/sephora", name="sephora", configs=configs)
-sephora_parser = Parser("data/current/sephora", "sephora", configs=configs)
+sephora_scrapper = Scrapper(urls["sephora"], "scrapper/data/current/sephora", name="sephora", configs=configs)
+sephora_parser = Parser("scrapper/data/current/sephora", "sephora", configs=configs)
 
-if "sephora.html" not in os.listdir("data/"):
+if "sephora.html" not in os.listdir("scrapper/data/current/"):
     sephora_scrapper.savehtml()
 
-if "sephora.json" not in os.listdir("data/"):
+if "sephora.json" not in os.listdir("scrapper/data/current/"):
     sephora_parser.parse_pages()
 
 # # # # # # # # # # # # # # # # #
@@ -46,11 +46,11 @@ if "sephora.json" not in os.listdir("data/"):
 # # # # # # # # # # # # # # # # #
 
 # Appel des objets scrapper et parser
-marionnaud_scrapper = Scrapper(urls["marionnaud"], "data/current/marionnaud", name="marionnaud", configs=configs)
-marionnaud_parser = Parser("data/current/marionnaud", "marionnaud", configs=configs)
+marionnaud_scrapper = Scrapper(urls["marionnaud"], "scrapper/data/current/marionnaud", name="marionnaud", configs=configs)
+marionnaud_parser = Parser("scrapper/data/current/marionnaud", "marionnaud", configs=configs)
 
-if "marionnaud.html" not in os.listdir("data/"):
+if "marionnaud.html" not in os.listdir("scrapper/data/current/"):
     marionnaud_scrapper.savehtml()
 
-if "marionnaud.json" not in os.listdir("data/"):
+if "marionnaud.json" not in os.listdir("scrapper/data/current/"):
     marionnaud_parser.parse_pages()

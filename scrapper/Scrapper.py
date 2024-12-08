@@ -118,7 +118,7 @@ class Parser:
             json.dump(data, json_file, ensure_ascii=False, indent=4)
         
         filename = self.file_output2.split("/")
-        if filename[1] not in os.listdir("data/"):
+        if filename[2] not in os.listdir("scrapper/data/"):
             errors.append(f"Etape enregistrement du fichier {self.file_output2} : le fichier n'a pas été enregistré.")
         
         print(f"{'---' * 3}")
