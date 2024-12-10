@@ -9,6 +9,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.service import Service as ChromeService
+import time
 
 
 # # # # # # # # # #
@@ -43,32 +44,49 @@ class Scrapper:
             options=chrome_options
         )
         return driver
-
-    # Traitement des cookies
-    def cookies(self, driver):
+    
+    def skip_cookies(self, driver):
         WebDriverWait(driver, 30).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, self.configs[self.name]["wait_cookies"]))
+            EC.presence_of_element_located((By.CSS_SELECTOR, self.configs[self.name]["cookies"]))
         )
         cookies = driver.find_element(By.CSS_SELECTOR, self.configs[self.name]["cookies"])
         cookies.click()
     
-    # Récupération des prix par select
-    def wait_price(self, driver):
+    # Attendre la récupération des prix 
+    def wait_contenance(self, driver):
         WebDriverWait(driver, 30).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, self.configs[self.name]["contenance"]))
         )
+    
+    # Sélection dynamique des prix pour Marionnaud
+    def select_by_price(self, driver, step):
+        elements = driver.find_elements(By.CSS_SELECTOR, self.configs[self.name]['contenance'])
+        elements[step].click()
+        time.sleep(5)
         
     # Sauvegarde des pages 
     def savehtml(self):
         url = self.url_input.split("?")[0]
         driver = self.config_driver()
         driver.get(url)
-        self.cookies(driver) if (self.name == "sephora") else None
-        self.wait_price(driver) if (self.name == "marionnaud") else None
-        html_source = driver.page_source
-        driver.quit()
-        with open(self.file_output, "w", encoding="utf-8") as file:
-            file.write(html_source)
+
+        # Séparer pour marionnaud du reste
+        if self.name != "marionnaud":
+            self.wait_contenance(driver)
+            html_source = driver.page_source
+            driver.quit()
+            with open(self.file_output, "w", encoding="utf-8") as file:
+                file.write(html_source)
+        
+        # Spécifique Marionnaud
+        else:
+            self.skip_cookies(driver)
+            self.wait_contenance(driver)
+            self.select_by_price(driver, 2)
+            html_source = driver.page_source
+            driver.quit()
+            with open(self.file_output, "w", encoding="utf-8") as file:
+                file.write(html_source)
 
 # # # # # # # # # #
 # Step --> Parse  #

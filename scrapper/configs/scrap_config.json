@@ -6,15 +6,13 @@
     },
     
     "sephora" : {
-        "wait_cookies" : "#footer_tc_privacy",
-        "cookies": "#footer_tc_privacy_button_2",
         "contenance": ".variation-title:first-of-type > span:first-of-type",
         "prix": ".variation-title > .hide > .product-variant-price-wrapper > .product-price"
     },
     
     "marionnaud" : {
-        "contenance": ".product-carousel-variant__size",
-        "click": "",
-        "prix": "e2core-price.product-add-to-cart__price-depiction.price.price--discounted > span.price__current > span.price__default-value"
+        "contenance": ".product-carousel-variant__size-name",
+        "cookies": "#onetrust-close-btn-container > button",
+        "prix": ".product-add-to-cart__price-container > .product-add-to-cart__price-details > .product-add-to-cart__price-depiction > .price__current" 
     }
 }
