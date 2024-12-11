@@ -1,5 +1,6 @@
 import os
 import json
+from datetime import datetime
 from Scrapper import Scrapper, Parser
 
 
@@ -21,11 +22,11 @@ with open("scrapper/configs/scrap_config.json") as file:
 nocibe_scrapper = Scrapper(urls["nocibe"], "scrapper/data/current/nocibe", name="nocibe", configs=configs)
 nocibe_parser = Parser("scrapper/data/current/nocibe", "nocibe", configs=configs)
 
-if "nocibe.html" not in os.listdir("scrapper/data/current/"):
+if f"nocibe_{datetime.now().strftime("%d-%m-%Y")}.html" not in os.listdir("scrapper/data/current/"):
     nocibe_scrapper.savehtml()
 
-if "nocibe.json" not in os.listdir("scrapper/data/current/"):
-    nocibe_parser.parse_pages()
+# if "nocibe.json" not in os.listdir("scrapper/data/current/"):
+#     nocibe_parser.parse_pages()
 
 # # # # # # # # # # # # # # # # 
 # Scrapper et parser Sephora  #
@@ -35,11 +36,11 @@ if "nocibe.json" not in os.listdir("scrapper/data/current/"):
 sephora_scrapper = Scrapper(urls["sephora"], "scrapper/data/current/sephora", name="sephora", configs=configs)
 sephora_parser = Parser("scrapper/data/current/sephora", "sephora", configs=configs)
 
-if "sephora.html" not in os.listdir("scrapper/data/current/"):
+if f"sephora_{datetime.now().strftime("%d-%m-%Y")}.html" not in os.listdir("scrapper/data/current/"):
     sephora_scrapper.savehtml()
 
-if "sephora.json" not in os.listdir("scrapper/data/current/"):
-    sephora_parser.parse_pages()
+# if "sephora.json" not in os.listdir("scrapper/data/current/"):
+#     sephora_parser.parse_pages()
 
 # # # # # # # # # # # # # # # # #
 # Scrapper et parser marionnaud #
@@ -49,8 +50,8 @@ if "sephora.json" not in os.listdir("scrapper/data/current/"):
 marionnaud_scrapper = Scrapper(urls["marionnaud"], "scrapper/data/current/marionnaud", name="marionnaud", configs=configs)
 marionnaud_parser = Parser("scrapper/data/current/marionnaud", "marionnaud", configs=configs)
 
-if "marionnaud.html" not in os.listdir("scrapper/data/current/"):
+if f"marionnaud_{datetime.now().strftime("%d-%m-%Y")}.html" not in os.listdir("scrapper/data/current/"):
     marionnaud_scrapper.savehtml()
 
-if "marionnaud.json" not in os.listdir("scrapper/data/current/"):
-    marionnaud_parser.parse_pages()
+# if "marionnaud.json" not in os.listdir("scrapper/data/current/"):
+#     marionnaud_parser.parse_pages()

@@ -1,5 +1,4 @@
 {
-    
     "nocibe" : {
         "contenance": ".product-detail__variant-name",
         "prix": ".product-detail__variant-row > .product-price"
@@ -11,7 +10,7 @@
     },
     
     "marionnaud" : {
-        "contenance": ".product-carousel-variant__size-name",
+        "contenance": ".product-carousel-variant__size > .product-carousel-variant__size-name",
         "cookies": "#onetrust-close-btn-container > button",
         "prix": ".product-add-to-cart__price-container > .product-add-to-cart__price-details > .product-add-to-cart__price-depiction > .price__current" 
     }
