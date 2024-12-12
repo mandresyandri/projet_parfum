@@ -25,8 +25,8 @@ nocibe_parser = Parser("scrapper/data/current/nocibe", "nocibe", configs=configs
 if f"nocibe_{datetime.now().strftime("%d-%m-%Y")}.html" not in os.listdir("scrapper/data/current/"):
     nocibe_scrapper.savehtml()
 
-# if "nocibe.json" not in os.listdir("scrapper/data/current/"):
-#     nocibe_parser.parse_pages()
+if f"nocibe_{datetime.now().strftime("%d-%m-%Y")}.json" not in os.listdir("scrapper/data/current/"):
+    nocibe_parser.save_json()
 
 # # # # # # # # # # # # # # # # 
 # Scrapper et parser Sephora  #
@@ -39,19 +39,19 @@ sephora_parser = Parser("scrapper/data/current/sephora", "sephora", configs=conf
 if f"sephora_{datetime.now().strftime("%d-%m-%Y")}.html" not in os.listdir("scrapper/data/current/"):
     sephora_scrapper.savehtml()
 
-# if "sephora.json" not in os.listdir("scrapper/data/current/"):
-#     sephora_parser.parse_pages()
+if f"sephora_{datetime.now().strftime("%d-%m-%Y")}.json" not in os.listdir("scrapper/data/current/"):
+    sephora_parser.save_json()
 
 # # # # # # # # # # # # # # # # #
 # Scrapper et parser marionnaud #
 # # # # # # # # # # # # # # # # #
 
 # Appel des objets scrapper et parser
-marionnaud_scrapper = Scrapper(urls["marionnaud"], "scrapper/data/current/marionnaud", name="marionnaud", configs=configs)
-marionnaud_parser = Parser("scrapper/data/current/marionnaud", "marionnaud", configs=configs)
+# marionnaud_scrapper = Scrapper(urls["marionnaud"], "scrapper/data/current/marionnaud", name="marionnaud", configs=configs)
+# marionnaud_parser = Parser("scrapper/data/current/marionnaud", "marionnaud", configs=configs)
 
-if f"marionnaud_{datetime.now().strftime("%d-%m-%Y")}.html" not in os.listdir("scrapper/data/current/"):
-    marionnaud_scrapper.savehtml()
+# if f"marionnaud_{datetime.now().strftime("%d-%m-%Y")}.html" not in os.listdir("scrapper/data/current/"):
+#     marionnaud_scrapper.savehtml()
 
 # if "marionnaud.json" not in os.listdir("scrapper/data/current/"):
 #     marionnaud_parser.parse_pages()

@@ -6,9 +6,9 @@ from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
-from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.service import Service as ChromeService
 
 
@@ -121,51 +121,60 @@ class Scrapper:
 # # # # # # # # # #
 class Parser:
     def __init__(self, file_output: str, name: str ,configs: dict):
-        self.file_output = file_output + ".html"
+        self.file_output = file_output
         self.name = name
         self.configs = configs
+        self.now = datetime.now().strftime("%d-%m-%Y")
+        self.errors = list()
+        self.data = {"contenance": [], "prix": []}
 
-    def parse_pages(self):
-        errors = list()
-        data = {"contenance": [], "prix": []} 
-
-        # Ouverture du fichier 
+    # Retrouver le html
+    def retreive_html(self):
         try:
-            # with open("data/UGE - D2SN - Python - 241125 - Exercice.html") as file:
-            with open(self.file_output) as file:
+            with open(self.file_output + "_" + self.now + ".html") as file:
                 content = file.read()
                 soup = BeautifulSoup(content, "html.parser")
+                return soup
         except FileNotFoundError:
-            errors.append("Etape lecture fichier : Le fichier spécifié est introuvable.")
-
-        # Extraction des contenances
+            self.errors.append("Etape lecture fichier : Le fichier spécifié est introuvable.")
+    
+    # Récupérer les contenances
+    def get_contenance(self):
+        soup = self.retreive_html()
         contenance_elements = soup.select(self.configs[self.name]["contenance"])
         if not contenance_elements:
-            errors.append("Etape extraction contenance : La classe contenant la contenance n'a pas été trouvée.")
+            self.errors.append("Etape extraction contenance : La classe contenant la contenance n'a pas été trouvée.")
         else:
             for e in contenance_elements:
                 cleaned_text = e.text.replace("\n", "")
                 cleaned_text = cleaned_text.strip()
-                data["contenance"].append(cleaned_text)
-
-        # Extraction des prix
+                self.data["contenance"].append(cleaned_text)
+   
+    # Récupérer les prix
+    def get_price(self):
+        soup = self.retreive_html()
         prix_elements = soup.select(self.configs[self.name]["prix"])
         if not prix_elements:
-            errors.append("Etape extraction prix : La classe contenant les prix n'a pas été trouvée.")
+            self.errors.append("Etape extraction prix : La classe contenant les prix n'a pas été trouvée.")
         else:
             for e in prix_elements:
                 cleaned_text = e.text.replace(",", ".").replace("€", "").replace("\n", "").replace("(1)", "")
                 cleaned_text = cleaned_text.strip()
-                data["prix"].append(cleaned_text)
-
-        # Enregristrement du fichier au format json
-        with open(self.file_output + ".json", "w") as json_file:
-            json.dump(data, json_file, ensure_ascii=False, indent=4)
+                self.data["prix"].append(cleaned_text)
+    
+    # Enregistrer les données en json
+    def save_json(self):
+        self.retreive_html()
+        self.get_contenance()
+        self.get_price()
         
-        filename = self.file_output2.split("/")
+        with open(self.file_output + "_" + self.now +".json", "w") as json_file:
+            json.dump(self.data, json_file, ensure_ascii=False, indent=4)
+        
+        filename = self.file_output.split("/")
         if filename[2] not in os.listdir("scrapper/data/"):
-            errors.append(f"Etape enregistrement du fichier {self.file_output2} : le fichier n'a pas été enregistré.")
+            self.errors.append(f"Etape enregistrement du fichier {self.file_output} : le fichier n'a pas été enregistré.")
         
         print(f"{'---' * 3}")
-        print(f"{self.name} is scrapped in {self.file_output2}" if len(errors) < 1 else f"Erreur : \n{errors}")
+        print(f"{self.name} is scrapped in json file" if len(self.errors) < 1 else f"Erreur : \n{self.errors}")
         print(f"{'---' * 3}")
