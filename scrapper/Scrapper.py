@@ -1,6 +1,7 @@
 import os
 import json
 import time
+import subprocess
 from datetime import datetime
 from bs4 import BeautifulSoup
 from selenium import webdriver
@@ -81,8 +82,7 @@ class Scrapper:
             time.sleep(3)
         except:
             self.errors.append("Erreur étape (Marionnaud): click sur contenance, revoir la classe")
-
-        
+ 
     # Sauvegarde des pages 
     def savehtml(self):
         url = self.url_input.split("?")[0]
@@ -129,18 +129,24 @@ class Parser:
         self.data = {"contenance": [], "prix": []}
 
     # Retrouver le html
-    def retreive_html(self):
+    def retreive_html(self, i):
         try:
-            with open(self.file_output + "_" + self.now + ".html") as file:
-                content = file.read()
-                soup = BeautifulSoup(content, "html.parser")
-                return soup
+            if self.name != "marionnaud":
+                with open(self.file_output + "_" + self.now + ".html") as file:
+                    content = file.read()
+                    soup = BeautifulSoup(content, "html.parser")
+                    return soup
+            else:
+                with open(self.file_output + f"-price-v{i}" + "_" + self.now + ".html") as file:
+                    content = file.read()
+                    soup = BeautifulSoup(content, "html.parser")
+                    return soup
         except FileNotFoundError:
             self.errors.append("Etape lecture fichier : Le fichier spécifié est introuvable.")
     
     # Récupérer les contenances
     def get_contenance(self):
-        soup = self.retreive_html()
+        soup = self.retreive_html(1)
         contenance_elements = soup.select(self.configs[self.name]["contenance"])
         if not contenance_elements:
             self.errors.append("Etape extraction contenance : La classe contenant la contenance n'a pas été trouvée.")
@@ -152,28 +158,59 @@ class Parser:
    
     # Récupérer les prix
     def get_price(self):
-        soup = self.retreive_html()
-        prix_elements = soup.select(self.configs[self.name]["prix"])
-        if not prix_elements:
-            self.errors.append("Etape extraction prix : La classe contenant les prix n'a pas été trouvée.")
+        if self.name != "marionnaud":
+            soup = self.retreive_html(1)
+            prix_elements = soup.select(self.configs[self.name]["prix"])
+            if not prix_elements:
+                self.errors.append("Etape extraction prix : La classe contenant les prix n'a pas été trouvée.")
+            else:
+                for e in prix_elements:
+                    cleaned_text = e.text.replace(",", ".").replace("€", "").replace("\n", "").replace("(1)", "")
+                    cleaned_text = cleaned_text.strip()
+                    self.data["prix"].append(cleaned_text)
         else:
-            for e in prix_elements:
-                cleaned_text = e.text.replace(",", ".").replace("€", "").replace("\n", "").replace("(1)", "")
-                cleaned_text = cleaned_text.strip()
-                self.data["prix"].append(cleaned_text)
+            for i in list(range(0, 3)):
+                soup = self.retreive_html(i)
+                prix_elements = soup.select(self.configs[self.name]["prix"])
+                if not prix_elements:
+                    self.errors.append("Etape extraction prix : La classe contenant les prix n'a pas été trouvée.")
+                else:
+                    for e in prix_elements:
+                        cleaned_text = e.text.replace(",", ".").replace("€", "").replace("\n", "").replace("(1)", "")
+                        cleaned_text = cleaned_text.strip()
+                        self.data["prix"].append(cleaned_text)
+    
+    # Archiver les données
+    def archive_html(self):
+        if self.name != "marionnaud":
+            old = self.file_output + "_" + self.now + ".html"
+            new = "scrapper/data/historics/html_files/" + old.split("/")[3]
+        
+            os.makedirs(os.path.dirname(new), exist_ok=True)
+            process = f"mv {old} {new}"
+            subprocess.run(process, shell=True)
+        else:
+            for i in list(range(0, 3)):
+                old = self.file_output + f"-price-v{i}" + "_" + self.now + ".html"
+                new = "scrapper/data/historics/html_files/" + self.file_output.split("/")[3] + f"-price-v{i}" + "_" + self.now + ".html"
+        
+                os.makedirs(os.path.dirname(new), exist_ok=True)
+                process = f"mv {old} {new}"
+                subprocess.run(process, shell=True)
     
     # Enregistrer les données en json
     def save_json(self):
-        self.retreive_html()
         self.get_contenance()
         self.get_price()
-        
+
         with open(self.file_output + "_" + self.now +".json", "w") as json_file:
             json.dump(self.data, json_file, ensure_ascii=False, indent=4)
         
         filename = self.file_output.split("/")
         if filename[2] not in os.listdir("scrapper/data/"):
             self.errors.append(f"Etape enregistrement du fichier {self.file_output} : le fichier n'a pas été enregistré.")
+        
+        self.archive_html()
         
         print(f"{'---' * 3}")
         print(f"{self.name} is scrapped in json file" if len(self.errors) < 1 else f"Erreur : \n{self.errors}")

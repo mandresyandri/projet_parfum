@@ -1,7 +1,8 @@
 import os
 import json
 from datetime import datetime
-from Scrapper import Scrapper, Parser
+from scrapper import Scrapper, Parser
+from etl import ETL
 
 
 # # # # # # # # # # # # # # # #
@@ -47,11 +48,16 @@ if f"sephora_{datetime.now().strftime("%d-%m-%Y")}.json" not in os.listdir("scra
 # # # # # # # # # # # # # # # # #
 
 # Appel des objets scrapper et parser
-# marionnaud_scrapper = Scrapper(urls["marionnaud"], "scrapper/data/current/marionnaud", name="marionnaud", configs=configs)
-# marionnaud_parser = Parser("scrapper/data/current/marionnaud", "marionnaud", configs=configs)
+marionnaud_scrapper = Scrapper(urls["marionnaud"], "scrapper/data/current/marionnaud", name="marionnaud", configs=configs)
+marionnaud_parser = Parser("scrapper/data/current/marionnaud", "marionnaud", configs=configs)
 
-# if f"marionnaud_{datetime.now().strftime("%d-%m-%Y")}.html" not in os.listdir("scrapper/data/current/"):
-#     marionnaud_scrapper.savehtml()
+marionnaud_scrapper.savehtml()
+marionnaud_parser.save_json()
 
-# if "marionnaud.json" not in os.listdir("scrapper/data/current/"):
-#     marionnaud_parser.parse_pages()
+
+# # # # # # # # #
+# Lancer l'ETL  #
+# # # # # # # # #
+
+etl_instance = ETL()
+etl_instance.archive_json()
