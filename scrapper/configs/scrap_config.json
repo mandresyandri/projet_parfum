@@ -10,8 +10,10 @@
     },
     
     "marionnaud" : {
-        "contenance": ".product-carousel-variant__size > .product-carousel-variant__size-name",
+        "contenance": ".abt-var-sel__name",
+        "prix": ".abt-var-sel__new-price",
+        "contenance_1": ".product-carousel-variant__size > .product-carousel-variant__size-name",
         "cookies": "#onetrust-close-btn-container > button",
-        "prix": ".product-add-to-cart__price-container > .product-add-to-cart__price-details > .product-add-to-cart__price-depiction > .price__current" 
+        "prix_1": ".product-add-to-cart__price-container > .product-add-to-cart__price-details > .product-add-to-cart__price-depiction > .price__current" 
     }
 }

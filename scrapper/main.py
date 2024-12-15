@@ -50,10 +50,21 @@ if f"sephora_{datetime.now().strftime("%d-%m-%Y")}.json" not in os.listdir("scra
 # Appel des objets scrapper et parser
 marionnaud_scrapper = Scrapper(urls["marionnaud"], "scrapper/data/current/marionnaud", name="marionnaud", configs=configs)
 marionnaud_parser = Parser("scrapper/data/current/marionnaud", "marionnaud", configs=configs)
+contain_marionnaud_html = list()
+contain_marionnaud_json = list()
 
-marionnaud_scrapper.savehtml()
-marionnaud_parser.save_json()
+for f in os.listdir("scrapper/data/current/"):
+    if ("marionnaud" in f) and (".json" in f):
+        contain_marionnaud_json.append(f)
+    
+    elif ("marionnaud" in f) and (".html" in f):
+        contain_marionnaud_html.append(f)
 
+if (len(contain_marionnaud_html) < 1):
+    marionnaud_scrapper.savehtml()
+
+if (len(contain_marionnaud_json) < 1):
+    marionnaud_parser.save_json()
 
 # # # # # # # # #
 # Lancer l'ETL  #

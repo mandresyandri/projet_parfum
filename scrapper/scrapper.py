@@ -25,6 +25,7 @@ class Scrapper:
         self.configs = configs
         self.now = datetime.now().strftime("%d-%m-%Y")
         self.errors = list()
+        self.marionnaud_version = ""
     
     # Config browser
     def config_browser(self):
@@ -68,16 +69,29 @@ class Scrapper:
     # Attendre la récupération des prix 
     def wait_contenance(self, driver):
         try:
-            WebDriverWait(driver, 30).until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, self.configs[self.name]["contenance"]))
-            )
+            if self.name != "Marionnaud":
+                WebDriverWait(driver, 30).until(
+                    EC.presence_of_element_located((By.CSS_SELECTOR, self.configs[self.name]["contenance"]))
+                )
+            else:
+                # Vérification de version de marionnaud avec click ou non 
+                try:
+                    WebDriverWait(driver, 30).until(
+                        EC.presence_of_element_located((By.CSS_SELECTOR, self.configs[self.name]["contenance"]))
+                    )
+                    self.marionnaud_version = "version 1"
+                except:
+                    WebDriverWait(driver, 30).until(
+                        EC.presence_of_element_located((By.CSS_SELECTOR, self.configs[self.name]["contenance_1"]))
+                    )
+                    self.marionnaud_version = "version 2"
         except:
             self.errors.append("Erreur étape : recherche par classe contenance, revoir la classe")
     
     # Sélection dynamique des prix pour Marionnaud
     def select_by_price(self, driver, step):
         try:
-            elements = driver.find_elements(By.CSS_SELECTOR, self.configs[self.name]['contenance'])
+            elements = driver.find_elements(By.CSS_SELECTOR, self.configs[self.name]['contenance_1'])
             elements[step].click()
             time.sleep(3)
         except:
@@ -89,15 +103,15 @@ class Scrapper:
         driver = self.config_driver()
         driver.get(url)
 
-        # Séparer pour marionnaud du reste
-        if self.name != "marionnaud":
+        # Scrapping de base
+        if (self.marionnaud_version != "version 2"):
             self.wait_contenance(driver)
             html_source = driver.page_source
             with open(self.file_output + "_" + self.now + ".html", "w", encoding="utf-8") as file:
                 file.write(html_source)
         
-        # Spécifique Marionnaud
-        else:
+        # Spécifique à la version 2 du scrap de Marionnaud
+        elif (self.name == "marionnaud") & (self.marionnaud_version == "version 2"):
             self.skip_cookies(driver)
             self.wait_contenance(driver)
             for i in list(range(0, 3)):
@@ -127,11 +141,20 @@ class Parser:
         self.now = datetime.now().strftime("%d-%m-%Y")
         self.errors = list()
         self.data = {"contenance": [], "prix": []}
+        self.marionnaud_version = "" # version à définir
+
+    # Vérifier la version de marionnaud
+    def get_marionnaud_version(self):
+        for f in os.listdir("scrapper/data/current/"):
+            if "marionnaud-price-v" in f:
+                self.marionnaud_version = "version 2"
+            elif "marionnaud_" in f:
+                self.marionnaud_version = "version 1"
 
     # Retrouver le html
     def retreive_html(self, i):
         try:
-            if self.name != "marionnaud":
+            if (self.marionnaud_version != "version 2") or (self.name != "marionnaud"):
                 with open(self.file_output + "_" + self.now + ".html") as file:
                     content = file.read()
                     soup = BeautifulSoup(content, "html.parser")
@@ -146,8 +169,13 @@ class Parser:
     
     # Récupérer les contenances
     def get_contenance(self):
-        soup = self.retreive_html(1)
-        contenance_elements = soup.select(self.configs[self.name]["contenance"])
+        if (self.marionnaud_version != "version 2") or (self.name != "marionnaud"):
+            soup = self.retreive_html(1)
+            contenance_elements = soup.select(self.configs[self.name]["contenance"])
+        else:
+            soup = self.retreive_html(1)
+            contenance_elements = soup.select(self.configs[self.name]["contenance_1"])
+        
         if not contenance_elements:
             self.errors.append("Etape extraction contenance : La classe contenant la contenance n'a pas été trouvée.")
         else:
@@ -158,7 +186,7 @@ class Parser:
    
     # Récupérer les prix
     def get_price(self):
-        if self.name != "marionnaud":
+        if (self.marionnaud_version != "version 2") or (self.name != "marionnaud"):
             soup = self.retreive_html(1)
             prix_elements = soup.select(self.configs[self.name]["prix"])
             if not prix_elements:
@@ -171,7 +199,7 @@ class Parser:
         else:
             for i in list(range(0, 3)):
                 soup = self.retreive_html(i)
-                prix_elements = soup.select(self.configs[self.name]["prix"])
+                prix_elements = soup.select(self.configs[self.name]["prix_1"])
                 if not prix_elements:
                     self.errors.append("Etape extraction prix : La classe contenant les prix n'a pas été trouvée.")
                 else:
@@ -182,7 +210,7 @@ class Parser:
     
     # Archiver les données
     def archive_html(self):
-        if self.name != "marionnaud":
+        if self.marionnaud_version != "version 2" or (self.name != "marionnaud"):
             old = self.file_output + "_" + self.now + ".html"
             new = "scrapper/data/historics/html_files/" + old.split("/")[3]
         
@@ -200,6 +228,7 @@ class Parser:
     
     # Enregistrer les données en json
     def save_json(self):
+        self.get_marionnaud_version()
         self.get_contenance()
         self.get_price()
 
